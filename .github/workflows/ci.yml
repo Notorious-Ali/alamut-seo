@@ -1,0 +1,44 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# cancel superseded runs on the same ref
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      # mongodb-memory-server downloads a mongod binary into this cache dir
+      # on first use; caching it keeps test:int well under the 30s hookTimeout
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/mongodb-binaries
+          key: mongodb-binaries-${{ runner.os }}
+          restore-keys: mongodb-binaries-
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm lint
+
+      # elevated hookTimeout: first run cold-downloads the mongod binary
+      - run: pnpm test:int -- --hookTimeout=120000
+
+      - run: pnpm build

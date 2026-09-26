@@ -1,0 +1,37 @@
+{
+  "extends": "../tsconfig.json",
+  "exclude": [],
+  "include": [
+    "**/*.js",
+    "**/*.jsx",
+    "**/*.mjs",
+    "**/*.cjs",
+    "**/*.ts",
+    "**/*.tsx",
+    "../src/**/*.ts",
+    "../src/**/*.tsx",
+    "next.config.mjs",
+    ".next/types/**/*.ts"
+  ],
+  "compilerOptions": {
+    "paths": {
+      "@payload-config": [
+        "./payload.config.ts"
+      ],
+      "alamut-seo": [
+        "../src/index.ts"
+      ],
+      "alamut-seo/client": [
+        "../src/exports/client.ts"
+      ],
+      "alamut-seo/rsc": [
+        "../src/exports/rsc.ts"
+      ],
+      "alamut-seo/next": [
+        "../src/exports/next.ts"
+      ]
+    },
+    "noEmit": true,
+    "emitDeclarationOnly": false,
+  }
+}
